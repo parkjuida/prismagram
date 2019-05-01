@@ -6,11 +6,10 @@ export const COMMENT_FRAGMENT = `
   }
 
 `
-
 export const USER_FRAGMENT = `
     id
     username
-    
+    avatar
 `
 
 export const FILE_FRAGMENT = `
@@ -34,3 +33,27 @@ export const FULL_POST_FRAGMENT = `
         }
     }
 `
+export const MESSAGE_FRAGMENT = `
+    id
+    text
+    from {
+        ${USER_FRAGMENT}
+    }
+    to {
+        ${USER_FRAGMENT}
+    }
+    createdAt
+`
+
+export const ROOM_FRAGMENT = `
+fragment RoomParts on Room {
+    id
+    participants {
+        ${USER_FRAGMENT}
+    } 
+    messages {
+        ${MESSAGE_FRAGMENT}
+    }
+    updatedAt
+    createdAt
+}`

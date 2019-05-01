@@ -1,0 +1,4 @@
+
+type Query {
+    seeRoom(roomId: String!): Room!
+}
