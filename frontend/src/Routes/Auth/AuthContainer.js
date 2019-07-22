@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import AuthPresenter from "./AuthPresenter";
 import UseInput from "../../Hooks/UseInput";
 
-import { LOG_IN, CREATE_ACCOUNT } from "./AuthQueries";
+import { LOG_IN, CREATE_ACCOUNT, CONFIRM_SECRET, LOCAL_LOG_IN } from "./AuthQueries";
 
 
 export default () => {
@@ -13,6 +13,7 @@ export default () => {
     const username = UseInput("");
     const firstName = UseInput("");
     const lastName = UseInput("");
+    const secret = UseInput("");
     const email = UseInput("");
     const requestSecretMutation = useMutation(LOG_IN, {
       variables: { email: email.value }
@@ -27,6 +28,17 @@ export default () => {
       }
     })
 
+    const confirmSecretMutation = useMutation(CONFIRM_SECRET, {
+      variables: {
+        email: email.value,
+        secret: secret.value,
+      }
+    })
+
+    const localLogInMutation = useMutation(LOCAL_LOG_IN, {
+
+    })
+
     const onSubmit = async(e) => {
       e.preventDefault();
       if (action === "logIn") {
@@ -34,8 +46,11 @@ export default () => {
           try {
             const { data:{requestSecret} } = await requestSecretMutation();
             if (!requestSecret) {
-              toast.error("You don`t have an account yet, create one");
+              toast.error("You don`t have an account byet, create one");
               setTimeout(() => setAction("signUp"), 3000);
+            } else {
+              toast.success("Check your inbox for your login secret");
+              setAction("confirm");
             }
           } catch {
             toast.error("Could not request secret");
@@ -63,10 +78,22 @@ export default () => {
         } else {
           toast.error("All field are required");
         }
+      } else if (action === "confirm") {
+        if (secret.value !== "") {
+          try {
+            const { data:{confirmSecret:token} } = await confirmSecretMutation();
+            if (token !=="" && token !== undefined) {
+              localLogInMutation({ variables: { token } });
+            } else {
+              throw Error();
+            }
+          
+          } catch {
+            toast.error("Can`t confirm secret");
+          }
+        }
       }
     }
-
-
 
     return (
       <AuthPresenter
@@ -76,6 +103,7 @@ export default () => {
         firstName={firstName}
         lastName={lastName}
         email={email}
+        secret={secret}
         onSubmit={onSubmit}
       />
     );

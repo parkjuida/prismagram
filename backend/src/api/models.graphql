@@ -28,6 +28,7 @@ type Post {
   comments: [Comment!]!
   isLiked: Boolean!
   likeCount: Int!
+  createdAt: String
 }
 
 type Like {

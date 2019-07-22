@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-
+import Helmet from "react-helmet";
 import Input from "../../Components/Input";
 import Button from "../../Components/Button";
-
 
 const Wrapper = styled.div`
     min-height: 80vh;
@@ -16,7 +15,7 @@ const Wrapper = styled.div`
 const Box = styled.div`
     ${props => props.theme.whiteBox}
     border-radius: 0px;
-    width: 100%
+    width: 100%;
     max-width: 350px;
 `;
 
@@ -34,7 +33,7 @@ const Form = styled(Box)`
     padding: 40px;
     padding-bottom: 30px;
     margin-bottom: 15px;
-    width: 100%
+    width: 100%;
     max-width: 350px;
     form {
         width: 100%;
@@ -54,26 +53,48 @@ export default ({setAction, action,
   username,
   firstName,
   lastName,
-  email, onSubmit}) => (
+  email, secret, onSubmit}) => (
       <Wrapper>
         <Form>
-          {action === "logIn" ? (
-            <form onSubmit={onSubmit}>
-                <Input placeholder={"Email"} {...email} type="email"/>
-                <Button text={"Log in"}/>
-            </form> 
-          ) : (
-            <form onSubmit={onSubmit}>
-                <Input placeholder={"First name"} {...firstName}/>
-                <Input placeholder={"Last name"} {...lastName}/>
-                <Input placeholder={"Email"} {...email} type="email"/>
-                <Input placeholder={"Username"} {...username}/>
-                <Button text={"Sign up"}/>
-            </form> 
+          {action === "logIn" && (
+            <>
+              <Helmet>
+                <title>Log in | Prismagram</title>
+              </Helmet>
+              <form onSubmit={onSubmit}>
+                  <Input placeholder={"Email"} {...email} type="email"/>
+                  <Button text={"Log in"}/>
+              </form>
+            </> 
+          )} 
+          {
+            action === "confirm" && 
+            <>
+              <Helmet><title>Confirm secret | Prismagram
+                </title></Helmet>
+              <form onSubmit={onSubmit}>
+                <Input placeholder={"Secret"} {...secret}/>
+                <Button text={"Confirm"}/>
+              </form>
+            </>
+          }
+          {action === "signUp" && (
+            <>
+              <Helmet>
+              <title>Sign up | Prismagram</title>
+              </Helmet>
+              <form onSubmit={onSubmit}>
+                  <Input placeholder={"First name"} {...firstName}/>
+                  <Input placeholder={"Last name"} {...lastName}/>
+                  <Input placeholder={"Email"} {...email} type="email"/>
+                  <Input placeholder={"Username"} {...username}/>
+                  <Button text={"Sign up"}/>
+              </form>
+            </> 
           ) }
           
         </Form>
-        <StateChanger>
+        {action !== "confirm" && <StateChanger>
           {action === "logIn" ? (
             <>
                 Don`t have an account? 
@@ -85,6 +106,7 @@ export default ({setAction, action,
               <Link onClick={() => setAction("logIn")}> Log in</Link>
             </>
           )}
-        </StateChanger>
+        </StateChanger>}
+        
       </ Wrapper>
     );
