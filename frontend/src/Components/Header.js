@@ -1,25 +1,25 @@
 import React from "react";
 import styled from "styled-components";
 import { Link, withRouter } from "react-router-dom";
-import { gql } from "apollo-boost";
 import { useQuery } from "react-apollo-hooks";
 import UseInput from "../Hooks/UseInput";
 import Input from "./Input";
 import { Compass, Logo, HeartEmpty, User } from "./Icons";
+import { ME } from "../SharedQueries";
 
 const Header = styled.header`
-    ${props => props.theme.whiteBox}
-    width: 100%;
-    background-color: ${props => props.theme.bgColor};
-    border: 0;
-    border-bottom: ${props => props.theme.boxBorder};
-    border-radius: 0px;
-    margin-bottom: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 25px 0px;
-    z-index: 2;
+  ${props => props.theme.whiteBox}
+  width: 100%;
+  background-color: ${props => props.theme.bgColor};
+  border: 0;
+  border-bottom: ${props => props.theme.boxBorder};
+  border-radius: 0px;
+  margin-bottom: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px 0px;
+  z-index: 2;
 `;
 
 const HeaderWrapper = styled.div`
@@ -42,39 +42,32 @@ const HeaderColumn = styled.div`
 `;
 
 const SearchInput = styled(Input)`
-    background-color: ${props => props.theme.bgColor};
-    padding: 5px;
-    font-size: 14px;
-    height: auto;
-    border-radius:3px;
-    text-align:center;
-    width: 80%;
-    &::placeholder {
-        opacity: 0.8;
-        font-weight: 200;
-    }
+  background-color: ${props => props.theme.bgColor};
+  padding: 5px;
+  font-size: 14px;
+  height: auto;
+  border-radius: 3px;
+  text-align: center;
+  width: 80%;
+  &::placeholder {
+    opacity: 0.8;
+    font-weight: 200;
+  }
 `;
 
 const HeaderLink = styled(Link)`
   &:not(:last-child) {
-      margin-right: 30px;
+    margin-right: 30px;
   }
 `;
 
-const ME = gql`
-  query {
-    myProfile {
-      username
-    }
-  }
-`;
 
 export default withRouter(({ history }) => {
   const search = UseInput("");
   const { data } = useQuery(ME);
-  const onSearchSubmit = (e) => {
+  const onSearchSubmit = e => {
     e.preventDefault();
-    history.push(`/search?term=${search.value}`)
+    history.push(`/search?term=${search.value}`);
   };
 
   return (
@@ -86,8 +79,12 @@ export default withRouter(({ history }) => {
           </HeaderLink>
         </HeaderColumn>
         <HeaderColumn>
-          <form onSubmit={ onSearchSubmit }>
-            <SearchInput {...search} placeholder="Search" />
+          <form onSubmit={onSearchSubmit}>
+            <SearchInput
+              value={search.value}
+              onChange={search.onChange}
+              placeholder="Search"
+            />
           </form>
         </HeaderColumn>
         <HeaderColumn>
@@ -97,14 +94,15 @@ export default withRouter(({ history }) => {
           <HeaderLink to="/notifications">
             <HeartEmpty />
           </HeaderLink>
-          {!data.myProfile ? 
-          <HeaderLink to="/#"> 
-            <User />
-          </HeaderLink> :
-          <HeaderLink to={data.myProfile.username}>
-            <User />
-          </HeaderLink>
-          }
+          {!data.myProfile ? (
+            <HeaderLink to="/#">
+              <User />
+            </HeaderLink>
+          ) : (
+            <HeaderLink to={data.myProfile.username}>
+              <User />
+            </HeaderLink>
+          )}
         </HeaderColumn>
       </HeaderWrapper>
     </Header>

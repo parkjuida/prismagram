@@ -19,30 +19,47 @@ const PostContainer = ({
   const [isLikedS, setIsLiked] = useState(isLiked);
   const [likeCountS, setLikeCount] = useState(likeCount);
   const [currentItem, setCurrentItem] = useState(0);
+  const [selfComments, setSelfComments] = useState([]);
   const comment = useInput("");
   const toggleLikeMutation = useMutation(TOGGLE_LIKE, {
-      variables: {postId: id}
+    variables: { postId: id }
   });
   const addCommentMutation = useMutation(ADD_COMMENT, {
-      variables: {postId: id, text:comment.value}
-  })
+    variables: { postId: id, text: comment.value }
+  });
   const slide = () => {
-      const totalFiles = files.length;
-      setTimeout(() => setCurrentItem((currentItem + 1) % totalFiles), 2000);
-  }
+    const totalFiles = files.length;
+    setTimeout(() => setCurrentItem((currentItem + 1) % totalFiles), 2000);
+  };
   useEffect(() => {
-      slide();
+    slide();
   }, [currentItem]);
 
   const toggleLike = () => {
-      if (isLikedS === true) {
-          setIsLiked(false);
-          setLikeCount(likeCountS - 1)
-      } else {
-          setIsLiked(true);
-          setLikeCount(likeCountS + 1)
-      }
-      toggleLikeMutation()
+    if (isLikedS === true) {
+      setIsLiked(false);
+      setLikeCount(likeCountS - 1);
+    } else {
+      setIsLiked(true);
+      setLikeCount(likeCountS + 1);
+    }
+    toggleLikeMutation();
+  };
+
+  const onKeyPress = async e => {
+    const { which } = e;
+    if (which === 13) {
+      e.preventDefault();
+      comment.setValue("");
+      const {
+        data: { addComment }
+      } = await addCommentMutation();
+      console.log(addComment);
+      setSelfComments([...selfComments, addComment]);
+      console.log([...selfComments, addComment]);
+      console.log(selfComments);
+    }
+    return;
   };
 
   return (
@@ -60,6 +77,8 @@ const PostContainer = ({
       setLikeCount={setLikeCount}
       currentItem={currentItem}
       toggleLike={toggleLike}
+      onKeyPress={onKeyPress}
+      selfComments={selfComments}
     />
   );
 };
@@ -91,7 +110,7 @@ PostContainer.propTypes = {
   ),
   createdAt: PropTypes.string.isRequired,
   caption: PropTypes.string.isRequired,
-  location: PropTypes.string,
+  location: PropTypes.string
 };
 
 export default PostContainer;
