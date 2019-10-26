@@ -29,7 +29,6 @@ export default function App() {
         cache,
         storage: AsyncStorage
       });
-      const token = await AsyncStorage.getItem("jwt");
       const client = new ApolloClient({
         cache,
         request: async operation => {

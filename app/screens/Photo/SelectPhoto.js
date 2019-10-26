@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Image, ScrollView, TouchableOpacity, Text } from "react-native";
+import {
+  View,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  ScrollView
+} from "react-native";
 import * as Permissions from "expo-permissions";
 import * as MediaLibrary from "expo-media-library";
 import Loader from "../../components/Loader";
@@ -12,7 +19,7 @@ const Button = styled.TouchableOpacity`
   border-radius: 3px;
   position: absolute;
   right: 5px;
-  bottom: 20px;
+  top: 20px;
   justify-content: center;
   align-items: center;
   background-color: ${styles.blueColor};
@@ -60,13 +67,14 @@ export default ({ navigation }) => {
   useEffect(() => {
     askPermission();
   }, []);
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       {loading ? (
         <Loader />
       ) : (
         <View>
-          {hasPermission && selected ? (
+          {hasPermission && selected && allPhotos ? (
             <>
               <Image
                 style={{ width: constants.width, height: constants.height / 2 }}
@@ -75,7 +83,12 @@ export default ({ navigation }) => {
               <Button onPress={handleSelected}>
                 <Text>Select photo</Text>
               </Button>
-              <ScrollView contentContainerStyle={{ flexDirection: "row" }}>
+              <ScrollView
+                contentContainerStyle={{
+                  flexDirection: "row",
+                  flexWrap: "wrap"
+                }}
+              >
                 {allPhotos.map(photo => (
                   <TouchableOpacity
                     key={photo.id}
@@ -85,8 +98,8 @@ export default ({ navigation }) => {
                       key={photo.id}
                       source={{ uri: photo.uri }}
                       style={{
+                        height: constants.height / 6,
                         width: constants.width / 3,
-                        height: constants.height / 5.5,
                         opacity: photo.id === selected.id ? 0.5 : 1
                       }}
                     />
