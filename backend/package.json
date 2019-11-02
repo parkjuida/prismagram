@@ -1,6 +1,9 @@
 {
   "name": "prismagram",
   "version": "1.0.0",
+  "engines": {
+    "node": "12"
+  }
   "description": "Instagram clone with Express + prisma + react + nodejs",
   "main": "index.js",
   "repository": "https://github.com/parkjuida/prismagram.git",
